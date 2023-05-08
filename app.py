@@ -24,10 +24,14 @@ from datetime import date
 # from slack_sdk.errors import SlackApiError
 # from slack_bolt import App
 import ssl
+from datetime import timedelta
+from ratelimit import limits, sleep_and_retry
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # skidmore-datahub.us.reclaim.cloud
+@sleep_and_retry
+@limits(calls=1, period=timedelta(seconds=60).total_seconds())
 def get_auth_header(email, password):
     """
     Authorizes a user through the SEGC using an input email and password string
@@ -39,6 +43,8 @@ def get_auth_header(email, password):
     signin_response = req.post(url_signin, data={'email': email, 'password': password})
     return {'Authorization': "Bearer {}".format(signin_response.json()['accessToken'])}
 
+@sleep_and_retry
+@limits(calls=1, period=timedelta(seconds=60).total_seconds())
 @st.cache_data
 def load_data(resource_name, auth_header):
     '''
@@ -83,7 +89,6 @@ def get_formatted_date(date_obj):
                     
 def check_password():
     """Returns `True` if the user had the correct password."""
-
     def password_entered():
         """Checks whether a password entered by the user is correct."""
         if st.session_state["password"] == st.secrets["password"]:
