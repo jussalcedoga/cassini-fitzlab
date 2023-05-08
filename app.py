@@ -20,9 +20,9 @@ import datetime
 import streamlit_authenticator as stauth
 import streamlit as st
 from datetime import date
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
-from slack_bolt import App
+# from slack_sdk import WebClient
+# from slack_sdk.errors import SlackApiError
+# from slack_bolt import App
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
